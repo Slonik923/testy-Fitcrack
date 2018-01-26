@@ -1,0 +1,9 @@
+Fitcrack
+- stručne 
+- používa BOINC
+- Hashcat
+- REST API
+- všeobecne ako testovať Fitcrack a prečo
+- Generátor: čo je a čo robí
+- Runner: cross-platform, testovaný na klientovi
+- možno zmieniť aj Asimilátor
