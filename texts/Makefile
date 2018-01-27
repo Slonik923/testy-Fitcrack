@@ -4,7 +4,7 @@
 # E-mail: dytrych AT fit vutbr cz
 #===========================================
 # asi budete chtit prejmenovat / you will probably rename:
-CO=xchrip00_bp
+CO=xchrip00_sep
 
 all: $(CO).pdf
 

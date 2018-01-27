@@ -11,9 +11,9 @@
 % zpracování / processing: make, make pdf, make clean
 %==============================================================================
 % Soubory, které je nutné upravit: / Files which have to be edited:
-%   xchrip00_bp-20-literatura-bibliography.bib - literatura / bibliography
-%   xchrip00_bp-01-kapitoly-chapters.tex - obsah práce / the thesis content
-%   xchrip00_bp-30-prilohy-appendices.tex - přílohy / appendices
+%   xchrip00_sep-20-literatura-bibliography.bib - literatura / bibliography
+%   xchrip00_sep-01-kapitoly-chapters.tex - obsah práce / the thesis content
+%   xchrip00_sep-30-prilohy-appendices.tex - přílohy / appendices
 %==============================================================================
 \documentclass[slovak,zadani]{fitthesis} % bez zadání - pro začátek práce, aby nebyl problém s překladem
 %\documentclass[english]{fitthesis} % without assignment - for the work start to avoid compilation problem
@@ -206,7 +206,7 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.},
 
   % Text prace / Thesis text
   % ----------------------------------------------
-  \input{xchrip00_bp-01-kapitoly-chapters}
+  \input{xchrip00_sep-01-kapitoly-chapters}
   
   % Kompilace po částech (viz výše, nutno odkomentovat)
   % Compilation piecewise (see above, it is necessary to uncomment it)
@@ -237,7 +237,7 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.},
   \fi
 \fi
   \begin{flushleft}
-  \bibliography{xchrip00_bp-20-literatura-bibliography}
+  \bibliography{xchrip00_sep-20-literatura-bibliography}
   \end{flushleft}
 
   % vynechani stranky v oboustrannem rezimu
@@ -296,10 +296,10 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.},
   \fi
   
   % Přílohy / Appendices
- % \input{xchrip00_bp-30-prilohy-appendices}
+ % \input{xchrip00_sep-30-prilohy-appendices}
   
   % Kompilace po částech (viz výše, nutno odkomentovat)
   % Compilation piecewise (see above, it is necessary to uncomment it)
-  %\subfile{xchrip00_bp-30-prilohy-appendices}
+  %\subfile{xchrip00_sep-30-prilohy-appendices}
   
 \end{document}
