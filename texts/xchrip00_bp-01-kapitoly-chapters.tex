@@ -24,7 +24,7 @@ Preto je aj pre túto prácu dôležité zvoliť správny postup testovania.
 Niektoré z~najväčších softvérových firiem dokonca pokladajú testovanie za tak dôležité, že vyvinuli modely životného cyklu vývoja softvéru postavené na testovaní.
 Aj keď sa Fitcrack nedrží žiadneho z~týchto modelov, ich prehľadu ako aj prehľadu techník testovania sa venujú samostatné kapitoly.
 
-%TODO: structure of paper
+V~prvých dvoch kapitolách je preto rozobraná problematika vývoja a testovania softvéru.
 Práca ďalej obsahuje popis jednotlivých súčastí systému Fitcrack z~ohľadom na dôležitosť informácii pri návrhu a implementácii testov pre tento systém, návrh testov pre systém Fitcrack a nakoniec zhrnutie zistení a plány do budúcna.
 
 \chapter{Návrh softvéru}
@@ -224,14 +224,13 @@ BOINC bol primárne vytvorený ako nástroj na verejné zdieľanie výpočtovýc
 Dobrovoľník môže poskytnúť svoje výpočtové kapacity niektorému z~projektov.
 Každý projekt sa zaoberá niečím iným, napríklad projekt \textit{Search for Extraterrestrial Intelligence} (SETI)~\cite{SETI} využíva výpočtový výkon dobrovoľníckych staníc na analyzovanie signálov z~vesmíru a hľadanie mimozemského života.
 Tento princíp sa nazýva volunteer computing.
-BOINC podporuje aj tzv.
-grid computing, teda zapojenie množstva počítačov a výpočtových stredísk z~rôznych geografických lokalít.
+BOINC podporuje aj tzv. grid computing, teda zapojenie množstva počítačov a výpočtových stredísk z~rôznych geografických lokalít.
 
 Boinc funguje na princípe server/klient, kde server predstavuje server projektu ku ktorému sa pripája ľubovoľný počet klientov.
-Klient sa môže pripojiť z~rôznych zariadení na ktorom beží rôzny operačný systém a sú vybavené rôznymi jednotkami, na ktorých ma byť prevádzaný výpočet (CPU, GPU, FPGA).
+Klient sa môže pripojiť z~rôznych zariadení, na ktorom beží rôzny operačný systém a sú vybavené rôznymi jednotkami, na ktorých ma byť prevádzaný výpočet (CPU, GPU, FPGA).
 Server zodpovedá za prideľovanie pracovných úloh klientom, zaisťuje sťahovanie najnovších spustiteľných súborov na klientské zariadenia.
 Klient môže byť pripojený na viac projektov a sám si určuje koľko výpočtového výkonu chce poskytnúť na jednotlivé úlohy.
-BOINC ráta s~prípadmi, kedy sa klienti pripoja, alebo odpoja počas výpočtu a ponúka niekoľko spôsobov riešenia, no konkrétne riešenie je implementované tvorcom projektu.
+BOINC ráta s~prípadmi, kedy sa klienti pripoja alebo odpoja počas výpočtu a ponúka niekoľko spôsobov riešenia, no konkrétne riešenie je implementované tvorcom projektu.
 Keďže je BOINC priamo navrhnutý pre distribuovaný výpočet cez internet ponúka množstvo bezpečnostných mechanizmov na prácu v~nedôveryhodnom prostredí.
 
 \subsection{Hashcat}
