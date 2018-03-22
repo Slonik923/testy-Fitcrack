@@ -1,0 +1,62 @@
+	Nekonečný cyklus, pokud se v BOINC tabulce objeví neassimilovaný workunit s canonical resultem:
+	{
+0.		// Implementováno námi
+		Zjisti od jakéh hosta přišel a ke kterému Package výsledek patří
+		Přečti typ výsledku
+	
+		if (typ == Benchamrk):
+		{
+1.			Přečti výsledný kód
+			if (Výsledek je v pořádku (kód 0)):
+			{	
+2.				Přečti změřený výkon, 
+			
+				if (Mód útoku je mask):
+3.					Proveď přepočet na hashcat-indexy
+
+4.				Ulož výkon hosta do databáze
+				Přečti čas benchmarku a ulož do databáze
+			}
+			else:
+5.				Naplánuj nový benchmark za exponenciálně se zvyšující počet minut
+		}
+	
+6.		else if (typ == Normal):
+		{
+7.			Přečti výsledný kód
+			if (Bylo nalezeno heslo (kód 0)):
+			{
+8.				Přečti heslo a ulož ho do databáze
+				Uprav stav Package na finished (1)
+				Zašli všem hostům pokyn k ukončení výpočtu
+				Odstraň z databáze nebo označ jako dokončené dosud nedokončené Package úlohy	
+				Přečti čas výpočtu úlohy a ulož do databáze
+				Vlož výsledek do hashcache, pokud tam ještě není
+			}
+9.			else if (Nebylo nalezeno heslo (kód 1)):
+			{
+10.				Přečti čas výpočtu úlohy a ulož do databáze
+				
+				if (Úloha měla dostatečnou velikost):
+11.					Uprav výkon hosta podle délky výpočtu poslední úlohy
+					
+12.				Přičti velikost zpracované úlohy k počtu již ověřených hesel
+			}
+			else:
+			{
+13.				// Došlo k chybě výpočtu
+				Zruš všechny prováděné úlohy daným hostem
+				V databázi těmto úlohám nastav příznak "retry"
+				Nastav výkon hosta na 0
+				Nastav stav hosta na benchamrk (0)
+				
+				Ukonči assimilaci, aby nedošlo ke smazání úloh
+			}
+		}
+	
+		// Ukončení asimilace
+14.		if (Systém je nastaven k mazání úloh):
+15.			Smaž položku úlohy z databáze
+		else:
+16.			Nastav položce úlohy příznak "finished"
+	}
