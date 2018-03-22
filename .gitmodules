@@ -1,0 +1,3 @@
+[submodule "fitcrackAPI"]
+	path = fitcrackAPI
+	url = https://github.com/Zippersk/fitcrackAPI
