@@ -6,7 +6,7 @@ from xml.etree import ElementTree as ET
 
 from config import *
 from database.service import *
-from setup import *
+from fc_test_library import *
 
 
 class TestGenerator(unittest.TestCase):

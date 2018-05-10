@@ -8,8 +8,7 @@ from api_response_models import charset_model
 from database.service import is_host_active, session, get_user, get_host_by_boinc_host_id, \
     get_hosts_count, add_host, get_bench_all_package, get_test_package, get_all_boinc_hosts, \
     get_all_charsets
-from setup import HostStatus, get_server_info, kill_all_modules_except
-from src.database.models import *
+from fc_test_library import HostStatus, get_server_info, kill_all_modules_except
 
 
 def db_item_from_boinc_host(boinc_host):

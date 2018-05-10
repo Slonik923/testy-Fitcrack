@@ -6,8 +6,8 @@ from time import sleep
 from xml.etree import ElementTree as Et
 
 from database.service import *
-from setup import is_running, make_run_only, start_daemons, RunnerOutput
-from src.database.models import FcPackage, FcJob, FcHost, FcHashcache
+from fc_test_library import is_running, make_run_only, start_daemons, RunnerOutput
+from database.src import FcJob, FcHost, FcHashcache
 
 
 class TestAssimilator(unittest.TestCase):
@@ -48,7 +48,6 @@ class TestAssimilator(unittest.TestCase):
         set_delete_finished_jobs_setting(0)
 
         if not is_package(self.package_id):
-            print("SETUP ADDING FUCKEN PACKAGE!!!!")
             self.package_id = add_package().id
 
     def tearDown(self):
@@ -92,19 +91,19 @@ class TestAssimilator(unittest.TestCase):
 
                 delete_package(self.package_id)
 
+                bench_config = FitcrackTLVConfig.create(mode="b", hash_type=0)
                 self.package_id = add_package(token=test_package_token,
                                               attack="dict", attack_mode=0,
                                               keyspace=2437, hc_keyspace=2437,
                                               dict1="facebook-phished.txt",
-                                              config_path=config.in_files["runner"][
-                                                  "config_dict"]).id
+                                              config_str=str(bench_config)).id
 
                 file_path = config.in_files["assimilator"]["bench_ok"]
                 old_package = self.run_assimilate_handler(file_path)
 
                 self.verify_assimilate_output(file_path, old_package)
 
-    def test_bench_err(self):
+    def test_bench_error(self):
         """
         Tests assimilation of benchmark task with error result
         """
@@ -142,6 +141,10 @@ class TestAssimilator(unittest.TestCase):
                 old_package = self.run_assimilate_handler(file_path)
 
                 self.verify_assimilate_output(file_path, old_package)
+
+    # TODO: implement or delete from bp
+    def test_normal_not_found_small(self):
+        pass
 
     def test_normal_error(self):
         """
@@ -436,9 +439,7 @@ class TestAssimilator(unittest.TestCase):
         job_id = add_job(self.package_id, self.wu_id).id
 
         old_package = get_package(self.package_id)
-        print("handler:", self.package_id)
-        # TODO:
-        self.assertIsNotNone(old_package, "nebuď kokot a daj to")
+        self.assertIsNotNone(old_package)
         session.expunge(old_package)
 
         set_wu_ready(self.wu_id, self.canonical_res.id, doc_in)
@@ -468,7 +469,6 @@ class TestAssimilator(unittest.TestCase):
                         str(self.tested_module) + "not running anymore")
 
         return old_package
-        # TODO: use ORM for old package
 
 
 # runs all tests in this file if file is run as normal python script

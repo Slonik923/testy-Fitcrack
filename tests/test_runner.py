@@ -5,7 +5,7 @@ import unittest
 
 import config
 import hashcat_parsers
-from setup import AttackModes, FitcrackTLVConfig, RunnerOutput
+from fc_test_library import AttackModes, FitcrackTLVConfig, RunnerOutput
 
 
 class TestRunner(unittest.TestCase):
@@ -21,10 +21,10 @@ class TestRunner(unittest.TestCase):
             print(runner, "needs to be in the same directory as tests")
             exit(1)
 
-        # checks for hashcat binary (hashcat stub)
+        # checks for hashcat binary (hashcat mock)
         if not os.path.isfile(hashcat):
             print(hashcat, "not found")
-            print("You need to copy hashcat_stub.py and rename the copy to", hashcat)
+            print("You need to copy hashcat_mock.py and rename the copy to", hashcat)
             print("You also need to set", hashcat, "as executable")
             exit(1)
 
@@ -109,7 +109,7 @@ class TestRunner(unittest.TestCase):
         self.verify_output_benchmark_ok(output)
 
     def test_mask_found(self):
-        self.setup_normal(AttackModes.mask, found=True)
+        self.setup_normal(AttackModes.mask, found=True, mask="?d?d?d?d")
 
         ret = subprocess.call(config.runner["path"] + config.runner["bin"])
         self.assertEqual(0, ret, "Runner return value")
@@ -121,7 +121,7 @@ class TestRunner(unittest.TestCase):
         self.verify_output_normal(output, found=True)
 
     def test_mask_not_found(self):
-        self.setup_normal(AttackModes.mask)
+        self.setup_normal(AttackModes.mask, mask="?d?d?d?d")
 
         ret = subprocess.call(config.runner["path"] + config.runner["bin"])
         self.assertEqual(0, ret, "Runner return value")
@@ -133,7 +133,7 @@ class TestRunner(unittest.TestCase):
         self.verify_output_normal(output)
 
     def test_mask_error(self):
-        self.setup_normal(AttackModes.mask, error=True)
+        self.setup_normal(AttackModes.mask, mask="?d?d?d?d", error=True)
 
         ret = subprocess.call(config.runner["path"] + config.runner["bin"])
         self.assertEqual(0, ret, "Runner return value")
@@ -313,17 +313,19 @@ class TestRunner(unittest.TestCase):
             TestRunner.add_warning_flag()
 
     @staticmethod
-    def setup_normal(attack, found=False, error=False, hash_type=0):
+    def setup_normal(attack, found=False, error=False, hash_type=0, mask=""):
         """
         Creates config file for normal task depenping on attack mode and hash type
         If set, raises one of error or found flag
+        :param mask:
         :param attack: attack mode
         :param found: password was found?
         :param error: error occurred?
         :param hash_type:
         :return:
         """
-        conf = FitcrackTLVConfig.create(mode="n", attack_mode=attack, hash_type=hash_type)
+        conf = FitcrackTLVConfig.create(mode="n", attack_mode=attack, hash_type=hash_type,
+                                        mask=mask)
         conf.to_file("config")
 
         if found:
