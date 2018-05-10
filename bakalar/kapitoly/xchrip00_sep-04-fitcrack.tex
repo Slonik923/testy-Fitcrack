@@ -53,7 +53,6 @@ Je potrebné testovať iba časti systému aspoň čiastočne implementované tv
 	\item \textbf{Generátor},
 	\item \textbf{Asimilátor},
 	\item \textbf{Runner},
-	\item \textbf{XtoHashcat}.
 \end{itemize}
 
 \subsection{WebAdmin}
@@ -66,11 +65,6 @@ Testovanie WebAdmina nie je súčasťou tejto práce, keďže práve prebieha v�
 Vyššie spomenuté \textbf{REST API} slúži na komunikáciu GUI a serverových modulov, konkrétne XtoHashcat a Hashcat-utils, čo sú programy podporujúce Hashcat (overovanie formátu hashu, …).
 So zbytkom serverových modulov komunikuje cez databázu.
 Toto API je schopné vytvárať nové úlohy, sledovať pripojených klientov, mapovať ich na existujúce úlohy, riadiť výpočet úloh, …
-
-\subsection{XtoHashcat}
-\label{xtohashcat}
-\textbf{XtoHashcat} je skript v~jazyku Python3 vyvinutý tvorcami systému Fitcrack, ktorý dokáže zobrať na vstup ľubovoľný súbor z~množiny podporovaných súborov a na výstup dá heš pre Hashcat.
-To znamená, že dokáže detekovať formát súboru a extrahovať heš zo súboru.
 
 \subsection{Generátor}
 \label{generator}
@@ -256,18 +250,162 @@ Funkčnosť akcie je prezentovaná algoritmom~\ref{alg:asimilator}.
 \label{runner}
 \textbf{Runner} je aplikácia bežiaca na klientskom počítači ovládajúca Hashcat.
 BOINC server pošle údaje o~pracovnej úlohe BOINC klientovi, ktorý pomocou systémových volaní spúšťa runner a predáva mu tieto informácie v~podobe vstupných súborov.
-Runner následne tieto informácie predá nástroju Hashcat.
-Runner sleduje stav výpočtu a po je jeho skončení predá výsledky BOINC klientovi.
-
+Runner následne tieto informácie predá nástroju Hashcat, sleduje stav výpočtu a po je jeho skončení predá výsledky BOINC klientovi, ktorý ich následne posiela na server.
 
 Generátor a Asimilátor komunikujú výhradne pomocou databázy, kde to validátor a runner riadi priamo BOINC.
 Okrem BOINC klienta nie je potrebné na klientskom zariadení nič inštalovať, BOINC klient sám zo servera sťahuje najnovšie spustiteľné súbory v~závislosti na architektúra klientského zariadenia.
 
-\todo{TLV slovník}
+\subsection{Komunikácia}
+Fitcrack používa na komunikáciu s runnerom 2 typy súborov:
+\begin{itemize}
+	\item \texttt{TLV slovník}, pre komunikáciu server $\rightarrow$ klient a
+	\item \texttt{runner output} súbor pre komunikáciu smerom klient $\rightarrow$ server.
+\end{itemize}
+TLV slovník používa generátor, aby predal informácie runneru ohľadom konkrétnej úlohy a runner output súbor obsahuje výsledky takejto úlohy, ktoré spracúva asimilátor.
+
+\subsection*{Komunikácia server $\rightarrow$ klient}
+\label{from_server}
+Pri vytvorení nového balíčka sa do databáze uloží konfiguračný súbor vo formáte TLV(type, length, value) slovníka, ktorý nesie základné informácie ako je napríkad typ útoku alebo typ hashu.
+Pri generovaní úloh generátor tento slovník dopĺňa o špecifické informácie o konktretne úlohe a posiela ho klientovi.
+
+Spolu s týmto slovníkom musia byť klientovi poslané ďalšie súbory obashujúce hash, prípadne slovníky.
+Nasledjúcis zoznam popisuje aké súbory sa posieľajú pri rôznych typoch útokov.
+
+\begin{itemize}
+	\item \textbf{benchmark}:
+		\begin{itemize}
+			\item \textbf{config} -- TLV slovník obsahujúci najmä typ hashu.
+		\end{itemize}
+
+	\item \textbf{mask attack}:
+		\begin{itemize}
+			\item \textbf{config} -- TLV slovník,
+			\item \textbf{data} -- obsahuje hash.
+		\end{itemize}
+
+	\item \textbf{slovníkový útok}:
+		\begin{itemize}
+			\item \textbf{config} -- TLV slovník,
+			\item \textbf{data} -- obsahuje hash,
+			\item \textbf{dict1} -- fragment slovníka, ktorý musí byť celý vyskúšaný.
+		\end{itemize}
+
+	\item \textbf{kombinačný útok}:
+		\begin{itemize}
+			\item \textbf{config} -- TLV slovník obsahujúci najmä typ hashu,
+			\item \textbf{data} -- obsahuje hash,
+			\item \textbf{dict1} -- prvý (ľavý) slovník,
+			\item \textbf{dict2} -- druhý (pravý) slovník.
+		\end{itemize}
+\end{itemize}
+
+\paragraph{Formát TLV slovníka} je nasledovný:
+\begin{flushleft}
+	\texttt{|||meno|typ|dĺžka|hodnota|||}
+\end{flushleft}
+\begin{itemize}
+	\item meno -- identifikátor záznamu,
+	\item typ -- typ položky hodnota,
+	\item dĺžka -- počet znakov položky hodnota,
+	\item hodnota -- samotná hodnota záznamu.
+\end{itemize}
+%TODO: pridať aj zoznam typov?
+
+\paragraph{Zoznam záznamov TLV slovníka}
+\begin{center}
+	\begin{tabular}{ | l | l | l | l | }
+		\hline
+		Meno & Typ & Popis & Vyplňuje \\
+		\hline
+		\hline
+		attack & String & [brute, dict, combinator] & webAdmin \\
+		\hline
+		attack\_mode & UInt & režim útoku Hashcatu (-a) & webAdmin \\
+		\hline
+		hash\_type & UInt & 0, 9400, 10500, \ldots & webAdmin \\
+		\hline
+		name & String & meno úlohy & webAdmin \\
+		\hline
+		left\_rule & String & pravidlo pre ľavý slovník & webAdmin \\
+		\hline
+		right\_rule & String & pravidlo pre pravý slovník & webAdmin \\
+		\hline
+		mask & String & hashcat maska & generátor \\
+		\hline
+		start\_index & BigUInt & počiatočný index & generátor \\
+		\hline
+		hc\_keyspace & BigUInt & počet hashcat indexov & generátor \\
+		\hline
+		mask\_hc\_keyspace & BigUInt & potrebný pre výpočet pokroku & generátor\\
+		\hline
+		mode & String & [n, b] & generátor \\
+		\hline
+	\end{tabular}
+\end{center}
+
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\textwidth]{obrazky/keep-calm.png}
+	\includegraphics[width=0.7\textwidth]{obrazky/files_schema.pdf}
 	\caption{Schéma komunikácie.}
 \end{figure}
-\todo{obrázok generátor -> TLV -> runner -> out -> assimilátor}
+
+\subsection*{Komunikácia klient $\rightarrow$ server}
+\label{from_client}
+Klient vytvára výstupný súbor s informáciami o výsledku danej úlohy.
+Súbor obsahuje na jednom riadku práve jednu informáciu, tá sa podľa typu úlohy a výsledku môže líšiť, no prvé 2 riadky su stále rovnaké: 
+\begin{verbatim}
+<mode>
+<status_code>
+\end{verbatim}
+Mód je buď benchmark, alebo normal:
+
+\medskip
+\textbf{Benchmark} \\
+\textbf{\texttt{<mode>}: b} \\
+Status code môže byť: \\
+\begin{itemize}
+	\item \textbf{0}: benchmark prebehlo v poriadku: \\
+		\begin{verbatim}
+		b
+		0
+		<cracking_speed (power)> - integer
+		<cracking_time> - double
+		\end{verbatim}
+
+
+	\item \textbf{4}: pri benchmarku nastala chyba: \\
+		\begin{verbatim}
+		b
+		4
+		<hashcat_exit_code> - integer
+		<hashcat_exit_info> - string
+		\end{verbatim}
+\end{itemize}
+
+\medskip
+\textbf{Normal} \\
+\textbf{\texttt{<mode>}: n} \\
+Status code môže byť: \\
+\begin{itemize}
+	\item \textbf{0}: bolo nájdené heslo: \\
+		\begin{verbatim}
+		n
+		0
+		<password (base64 encoded)> - string
+		<cracking_time> - double
+		\end{verbatim}
+	\item \textbf{1}: heslo nebolo nájdené: \\
+		\begin{verbatim}
+		n
+		1
+		<cracking_time> - double
+		\end{verbatim}
+	\item \textbf{4}: chyba na strane klienta: \\
+		\begin{verbatim}
+		n
+		4
+		<hashcat_exit_code> - integer
+		<hashcat_exit_info> - string
+		\end{verbatim}
+\end{itemize}
 

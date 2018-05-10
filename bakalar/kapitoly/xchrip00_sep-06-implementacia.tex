@@ -1,0 +1,102 @@
+\chapter{Implementácia}
+Implementáciou sa skladá z nasledujúcich súborov:
+\begin{itemize}
+	\item \textbf{\texttt{test\_generator.py}} -- obsahuje testy generátora,
+	\item \textbf{\texttt{test\_assimilator.py}} -- obsahuje testy asimilátora,
+	\item \textbf{\texttt{test\_runner.py}} -- obsahuje testy pre runner,
+	\item \textbf{\texttt{test\_api.py}} -- obsahuje testy pre API,
+	\item \textbf{\texttt{hashcat\_mock.py}} -- náhrada hashcatu,
+	\item \textbf{\texttt{hashcat\_parsers.py}} -- obsahuje parsery používané pri testoch runneru,
+	\item \textbf{\texttt{api\_response\_models.py}} -- obsahuje funkcie, ktoré konvertujú údaje do formátu \texttt{json}, tak ako to robí API,
+	\item \textbf{\texttt{config.py}} -- konfiguračný súbor obsahujúci informácie k databáze, cestám k súborom a iné,
+	\item \textbf{\texttt{fc\_test\_library.py}} -- obsahuje funkcie, triedy a enum-y používané pri testovaní
+	\item \textbf{\texttt{main.py}} -- postupne spúšťa všetky testovacie triedy
+	\item \textbf{\texttt{database/}} -- balíček s súbormi pracujucími s databázou
+		\begin{itemize}
+			\item \textbf{\texttt{models.py}} -- definície tabuliek databázy
+			\item \textbf{\texttt{service.py}} -- funkcie pristupujúce do databázy
+		\end{itemize}
+\end{itemize}
+Súbory začínajúce \texttt{test\_} obsahujú testy a pomocné funkcie k testovaniu jednotlivých modulov.
+Testovacie funkcie majú prefix \texttt{test\_}.
+Je možné ich spustiť typicky: \texttt{python3 test\_*.py}, alebo vybrať pomocou unittest frameworku vybrať konkrétny súbor, triedu, alebo test:
+\begin{verbatim}
+	python3 -m unittest test_runner
+	python3 -m unittest test_runner.TestRunner
+	python3 -m unittest test_runner.TestRunner.test_benchmark_ok
+\end{verbatim}
+
+
+Testy využívajú vzor fixtures~\ref{fixtures}, konkrétne funkcie z frameworku unittest:
+\begin{itemize}
+	\item \texttt{setUpClass} je volaná pred spustením prvého testu a pripravuje systém na testovanie modulu.
+		Typicky vypína všetky systémové moduly, okrem testovaného a pripravuje databázu: vymaže všetky záznamy z tabuliek, ktoré budú testované a pridá záznamy, ktoré sa nebudú meniť počas testovania celého modulu, napríklad pridanie balíčka pri testovaní asimilátora.
+	\item \texttt{tearDownClass}  je volaná po skončení posledného testu a má za úlohu vrátiť SUT do stavu pred testovaním, takže opäť zapne ostatné moduly a vymaže záznamy, ktoré boli pridané počas testovanie.
+	\item \texttt{setUp} je funkcie volaná pred každým testom, typicky nastavuje parametre Fitcracku, ktoré sa menia počas testu, alebo pridáva záznamy.
+	\item \texttt{tearDown} je volaná po skončení každého testu a väčšinou má na starosti mazanie záznamov tabuliek, ktoré by mohli ovplyvniť nasledujúce testy.
+\end{itemize}
+
+Súbor \textbf{\texttt{fc\_test\_library.py}} obsahuje okrem iného aj funckie pre ovládanie Fitcracku a jeho modulov a tiež triedy:
+\begin{itemize}
+	\item \textbf{\texttt{FitcrackTLVConfig}}, ktorá reprezentuje TLv konfiguračný súbor posielaný klientovi. 
+		Objekt tejto triedy je možné vytvoriť zadaním parametrov, alebo prečítať priamo zo súboru.
+		Tento objekt je následne možné reprezentovať ako reťazec a zapísať do súboru.
+		Trieda je používaná na generovanie a kontrolovanie konfiguračný súborov vytvorených generátorom.
+	\item \textbf{\texttt{RunnerOutput}} reprezentuje výstupný súbor modulu runner. Objekt triedy môže obsahovať rôzne atribúty v závislosti na type úlohy z ktorej bol generovaný.
+\end{itemize}
+
+\todo{čo bude v nasledujucich podkapitolach} \\
+
+\section{Implementácia testov pre serverový modul assimilátor}
+Pri bližšom pohľade na CFG asimilátora~\ref{fig:cfg_asim} a na zoznam primárnych ciest~\ref{navrh_asim} sa každá cesta opakuje so zmeneným len posledným uzlom, kde uzol číslo \texttt{15} znamená, že asimilovaná úloha sa má zmazať a uzol číslo \texttt{16} nastavuje asimilovanej úlohe príznak \texttt{finished}.
+Framework unittest ponúka pre tieto účely možnosť definovať si \texttt{subset}\footnote{\url{https://docs.python.org/3.6/library/unittest.html\#distinguishing-test-iterations-using-subtests}}, ktorý slúži na spúštanie podobných testov.
+Subtest-u je predaná meniaci sa argument a pri výpise je potom jasné pre ktoré hodnoty tohto argumnety test prešiel, alebo nie.
+V našom prípade je parametrom príznak mazania dokončených úloh.
+
+\subsection*{Príprava SUT a návrat SUT do stavu pred testovaním}
+\begin{description}
+	\item \textbf{\texttt{setUpClass}}: pred spustením testov je potrebné vymazať z databáze všetky záznamy, ktoré by mohli ovplyvniť testy, zastaviť všetky serverové moduly okrem asimilátora a pridať balíček, pre ktorý budú generované dokončené úlohy, keďže asimilátor má na starosti spracovať výsledky dokončených úloh.
+	\item \textbf{\texttt{tearDownClass}}: po testoch je analogicky potrebné spustiť všetky serverové moduly, vymazať tabuľky, ktoré boli ovplyvnené testami a vymazať príznak mazanie dokončených úloh z databázy.
+\end{description}
+
+\subsection*{Pokrytie primárnych ciest}
+\begin{itemize}
+	\item \texttt{test\_bench\_no\_file}: $t_1 = \{[0, 1, 14, 15], [0, 1, 14, 16]\}$
+	\item \texttt{test\_bench\_ok\_mask}: $t_2 = \{[0, 1, 2, 3, 4, 14, 15], [0, 1, 2, 3, 4, 14, 16]\}$
+	\item \texttt{test\_bench\_ok}: $t_3 = \{[0, 1, 2, 4, 14, 15], [0, 1, 2, 4, 14, 16]\}$
+	\item \texttt{test\_bench\_error}: $t_4 = \{[0, 1, 5, 14, 15], [0, 1, 5, 14, 16]\}$
+	\item \texttt{test\_normal\_found}: $t_5 = \{[0, 6, 7, 8, 14, 15], [0, 6, 7, 8, 14, 16]\}$
+	\item \texttt{test\_normal\_not\_found}: $t_6 = \{[0, 6, 7, 9, 10, 11, 12, 14, 15], [0, 6, 7, 9, 10, 11, 12, 14, 16]\}$
+	\item \texttt{test\_normal\_error}: $t_7 = \{[0, 6, 7, 13, 14, 15], [0, 6, 7, 13, 14, 16]\}$
+\end{itemize}
+Cesty $[0, 6, 14, 15]$ a $[0, 6, 14, 16]$ sú syntakticky nedosiahnuteľné, kedže typ úlohy nemôže byť iný ako \texttt{normal} alebo \texttt{benchmark}.
+\todo{pokrytie ciest test funkciami} \\
+\todo{boinc hierarchy directories} \\
+\todo{boinc template xmls} \\
+
+\section{Implementácia testov pre serverový modul generátor}
+\todo{čo robia setupy a teardowny} \\
+\todo{test funkcie?} \\
+\todo{pokrytie ciest test funkciami} \\
+\todo{boinc hierarchy directories} \\
+\todo{boinc template xmls} \\
+\todo{ďalšie boinc sračky} \\
+
+\section{Implementácia testov pre modul runner}
+\todo{čo robia setupy a teardowny} \\
+\todo{test funkcie?} \\
+\todo{mock a jeho argumenty} \\
+\todo{parsery} \\
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky/runner_files.pdf}
+	\caption{Schéma architektúry testov modulu runner.}
+	\label{fig:runner_files}
+\end{figure}
+
+\section{Implementácia testov aplikačného rozhrania (API)}
+\todo{čo robia setupy a teardowny} \\
+\todo{test funkcie?} \\
+\todo{api responses} \\
+\todo{generovanie test cases} \\

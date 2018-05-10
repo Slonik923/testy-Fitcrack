@@ -27,7 +27,7 @@ Existujú rôzne kritéria pokrytia zaoberajúcimi sa rôznými artefaktmi a sú
 Kritérium $C_1$ zahŕňa kritérium $C_2 \,(C_1 > C_2)$, práve vtedy, keď každá testovacia sada splňajúca kritérium $C_1$ tiež spĺňa kritérium $C_2$.
 \end{definition}
 
-\section{Testovanie založené na prechode grafom}
+\section{Testovanie založené na prechode grafu}
 \todo{Rozdelenie do kapitol, usporiadanie}\\
 Graf je jedna z najpouživanejších štruktúr pre abstrakciu, hlavne preto, lebo je dobre definová, veľmin názorná a je jednoduché ňom niečo jasne vyjadriť.
 V testovaní poznáme niekoľko typov grafu, každý z nich testuje systém iným spôsobom~\cite{graph_testing}:
@@ -173,7 +173,7 @@ Požiadavky na testy v CFG môžme vyjadriť ako požiadavok na prechod hranou, 
 		%\begin{definition}
 		%	Testovaci sada T splňuje pokrytie uzlov (NC) na grafu G, práve vtedy, keď pre každý syntaktický dosiahnuteľný uzol $n \in N$ existuje cesta $p \in path(T)$ obsahujúca uzol $n$.
 		%\end{definition}
-	\item Kritérium pokrytia hran, \textbf{Edge Coverage (EC)} vyžaduje, aby požiadavky na test obsahovaly každú syntakticky dosiahnuteľnú cestu o dĺžke 0, alebo 1\footnote{Požiadavok na cestu dĺžky 0 z uzlu $n$ odpovedá požiadavku na prechod uzlom $n$ -- špeciálny prípad grfau bez hrán}.
+	\item Kritérium pokrytia hran, \textbf{Edge Coverage (EC)} vyžaduje, aby požiadavky na test obsahovaly každú syntakticky dosiahnuteľnú cestu o dĺžke 0, alebo 1\footnote{Požiadavok na cestu dĺžky 0 z uzlu $n$ odpovedá požiadavku na prechod uzlom $n$ -- špeciálny prípad grafu bez hrán}.
 	\item Kritérium pokrytia párov hrán, \textbf{Edge-Pair Coverage (EPC)} vyžaduje, aby požiadavky na test obsahovali každú syntaktiky dosiahnuteľnú cestu o dĺžke najviac 2.
 	\item Kritérium pokrytia hlavných ciest, \textbf{Prime Path Coverage (PPC)} vyžaduje, aby požiadavky na testy obsahovali všetky hlavné cesty. Príklad je na obrázku~\ref{fig:ppc_coverage}.
 \end{description}
@@ -295,10 +295,9 @@ Porovnanie kritérii pokrytia riadiacich tokov je na obrázku ~\ref{fig:coverage
 \subsection{Dátové toky}
 Aby sme mohli sledovať dátové toky programu, potrebujeme v grafe (CFG) zaznamenať ako sa pristupuje k dátam.
 Pre zjednodušenie sú dáta brané ako neznáme hodnoty v pomenovaných úložiskách.
-Zaujíma nás \texttt{tok dát}, teda z ktorých úložísk sa \textbf{číta} a do ktorých sa \textbf{zapisuje}.
-Nezaujímajú nás konštanty, ani výraza, teda čo sa s dátami deje.
+Zaujíma nás \textit{tok dát}, teda z ktorých úložísk sa \textbf{číta} a do ktorých sa \textbf{zapisuje}.
+Nezaujímajú nás konštanty, ani výrazy, teda čo sa s dátami deje.
 
-\todo{Takto? alebo ako to je v \ref{def:cfg}}\\
 Rozšírená definícia CFG:
 \begin{definition}
 	\textbf{CFG pre analýzu dátových tokov} je n-tica: 
@@ -358,8 +357,7 @@ Používame nasledujúce funkcie:
 Hodnoty premenných sú prenášané z miesta definíce na miesto použitia.
 Tieto páry nazývame \textbf{du-pairs} (definition-use pairs).
 
-Zaujímajú nás cesty medzi definíciou a použitím pre danú premennú:
-Cesta \textbf{du-path} je jednoduchá cesta~\ref{pojmy_cfg} \texttt{v} CFG [$n_i, \ldots, \_j$], pre ktorú platí:
+Cesta \textbf{du-path} je jednoduchá cesta~\ref{pojmy_cfg} $v$ control flow grafu [$n_i, \ldots, n_j$], pre ktorú platí:
 \begin{itemize}
 	\item $v \in$ def($n_i$) -- prvý uzel definuje hodnotu premennej,
 	\item $v \in$ use($n_j$) -- posledný uzel premennú používa,
@@ -502,14 +500,14 @@ Preto definujeme zoskupenie týchto množín:
 \section{Vstupné domény}
 \label{vstupne_domeny}
 \textbf{Vstupná doména} (doména vstupu, priestor, input space) je množina všetkých vstupov systému.
-Môžo to byť:
+Môžu to byť:
 \begin{itemize}
 	\item vstupné parametre metód,
 	\item globálne, alebo statické premenné,
 	\item vstupy od užívateľa, atgumenty programu,
 	\item objekty reprezentujúce aktuálny stav systému.
 \end{itemize}
-Vstupná doména je rozdelená na menšie celky(bloky, regióny, časti)\footnote{V matematike je to rozklad na ekvivalenčné triedy}, ktoré obsahujú rovnako užitočné hodinoty z pohľadu testovania.
+Vstupná doména je rozdelená na menšie celky(bloky, regióny, časti)\footnote{V matematike je to rozklad na ekvivalenčné triedy}, ktoré obsahujú rovnako užitočné hodnoty z pohľadu testovania.
 \begin{table}{H}
 	\centering
 	\begin{tabular}{ | c | c | c | c | c | }
@@ -527,13 +525,13 @@ Cieľom je otestovať všetky takéto kategórie, pričom z každej kategórie s
 
 \subsection*{Rozklad vstupných domén}
 \label{rozklad_domen}
-Každá správna charakteristika definuje rozklad domény (q), ktorý musí spĺňať nasledujúce podmienky:
+Každá správna charakteristika definuje rozklad domény ($q$), ktorý musí spĺňať nasledujúce podmienky:
 \begin{itemize}
-	\item Jednotlivé bloky rozkladu ($B_q$) musiac byť vzájomne disjunktné, nesmú sa prekrývať:
+	\item Jednotlivé bloky rozkladu ($B_q$) musia byť vzájomne disjunktné, nesmú sa prekrývať:
 		\begin{center}
 			$b_i \cap b_j = \emptyset, i \not = j, b_i, b_j \in B_q$
 		\end{center}
-	\item Vštky bloky dohromady musia byť kompletné, rozklad musí zahrňovať celú doménu:
+	\item Všetky bloky dohromady musia byť kompletné, rozklad musí zahrňovať celú doménu:
 		\begin{center}
 			$\underset{b \in B_q}{\bigcup} b = D$
 		\end{center}
