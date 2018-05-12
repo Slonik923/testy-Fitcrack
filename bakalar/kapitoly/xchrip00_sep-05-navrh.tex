@@ -1,4 +1,5 @@
 \chapter{Návrh testov pre systém Fitcrack}
+\label{navrh}
 K~návrhu testov pre systém Fitcrack potrebujeme poznať:
 \begin{itemize}
 	\item architektúru systému Fitcrack~\ref{Fitcrack},
@@ -19,14 +20,17 @@ Moduly by mali byť testovateľné samostatne, takže každý modul bude testova
 
 Prístup do databáze je pomocou frameworku SQL ALchemy\footnote{\url{https://www.sqlalchemy.org/}}.
 Je to jeden z najpouživanejších frameworkov v jazyku Python, dovoľuje používať ORM (Object Relation Mapper)\footnote{\url{https://en.wikipedia.org/wiki/Object-relational_mapping}} a využíva ho aj API, takže ho nebude potrebné inštalovať.
+%todo napísať o oddelení databáze a tom, že som sa snažil vytvoriť funkcie, aby to mohol každý používať
 
 
 \section{Návrh testov pre modul generátor}
+\label{navrh_gen}
 Generátor má na starosti generovanie nových úloh pre klientov a rozdeľovanie nových, či neúspešne dokončených úloh. 
 Komunikuje výhradne s databázou, beží v nekonečnom cykle, kde periodicky kontroluje bežiace balíky a ak je to potrebné generuje nové úlohy, alebo prerozdeľuje neúspešne dokončené úlohy.
 Generátor dopĺňa TLV slovník~\ref{from_server}, ktorý sa vytvára pri pridaní nového balíčka.
 Doplnený TLV slovník je určený pre runner, ktorý podľa neho vie o akú úlohu sa jedná a aké parametre má poslať Hashcat-u.
 
+Generátor je najzložitejší modul a tomu odpovedá aj graf toku riadenia~\ref{fig:cfg_gen}, ktorý obsahuje aj veľa cyklov.
 Pre testovanie bol pôvodný zámer implementovať pokrytie primárny ciest~\ref{kriteria_cfg}, no po vygenerovaní všetkých primárnych ciest pomocou vyššie spomínaného program Prime path coverage bolo od tohto zámeru upustené, hlavne kvôli rozsahu, keďže počet primárnych ciest je 777.
 Nakoniec som uznal za vhodné vybrať kritérium pokrytia všetkých uzlov (node coverage).
 
@@ -80,6 +84,7 @@ Pri testovaní asimilátora bude potrebné kontrolovať aké zmeny boli preveden
 
 
 \section{Návrh testov pre modul runner}
+\label{navrh_runner}
 Runner má za úlohu spúštať Hashcat podľa konfiguračného TLV súboru~\ref{from_server}, kontrolovať priebeh výpočtu Hashcatu a keď výpočeť skončí runner by mal vytvoriť výstupný súbor s výsledkami úlohy~\ref{from_client}.
 
 Testovanie runnera je potrebné rozdeliť na 2 časti: testovanie, že runner spúšťa hashcat so správnymi parametrami a testovanie, že runner vytvára správne výstupné súbory podľa výstupu Hashcatu.
@@ -89,7 +94,49 @@ Aby sme mohli kontrolovať správnosť argumentov s ktorými runner spúšťa Ha
 V našom prípade to bude mock~\ref{mock}, keďže nesprávne argumenty môžu spôsobiť zlyhanie testu a náhrade bude vraciať rôzne výstupy v závislosti na vstupe.
 
 
-\section{Návrh testov pre API}
-API z časti nahradzuje funkciu webAdmina, vzhľadom nato, že je cez neho možné ovládať všetky časti systému Fitcrack ako pridávanie nových balíčkov, hosťov, spúšťanie, pozastavenie crackovania, alebo celého projektu cez BOINC ovládacie prvky a iné.
+\section{Návrh testov pre aplikačné rozhranie}
+\label{navrh_API}
+Aplikačné rozhranie(API) z časti nahradzuje funkciu webAdmina, vzhľadom nato, že je cez neho možné ovládať všetky časti systému Fitcrack ako pridávanie nových balíčkov, hosťov, spúšťanie, pozastavenie crackovania, alebo celého projektu cez BOINC ovládacie prvky a iné.
 API je rozdelené do endpointov, kde každý z nich má na starosti inú časť systému~\ref{API} a každý endpoint má rôzne vstupné parametre na ktoré sa dá aplikovať testovanie založené na vstupných doménach~\ref{vstupne_domeny}.
-Odpovede na dotazy v API budú vo formáte \texttt{json}, takže pre každý objekt používaný v databázi a dotazovaný pomocou API bude potrebné implementovať ekvivalentný prevod aký robí API.
+Odpovede na dotazy v API budú vo formáte \texttt{json}, takže pre každý objekt používaný v databázi a dotazovaný pomocou API bude potrebné implementovať ekvivalentný prevod ako to robí API.
+
+Vzhľadom nato, že API je stále vo vývoji nie je možné otestovať všetky jeho koncové body(endpoints), preto som vybral niekoľko už implementovaných a dôležitých pre fungovanie systému Fitcrack:
+\begin{itemize}
+	\item \textbf{\texttt{hashcat}} -- slúžia na prácu s Hashcatom,
+	\item \textbf{\texttt{host}} -- operácie s hosťami,
+	\item \textbf{\texttt{jobs}} -- operácie s balíčkami,
+	\item \textbf{\texttt{serverInfo}} -- slúži na zistenie stavu servera,
+	\item \textbf{\texttt{dictionary}} -- operácie so slovníkmi
+	\item \textbf{\texttt{masks}} -- operácie s maskami
+	\item \textbf{\texttt{rule}} -- operácie so súbormi obsahujúcimi pravdidlá pre slovníky
+	\item \textbf{\texttt{charset}} -- operácie s charset súbormi.
+\end{itemize}
+Každý z týchto koncových bodov obsahuje množinu operácii a každá operácia má niekoľko parametrov.
+Jeden koncový bod bude reprezentovaný jednou triedou.
+
+\subsection*{Rozdelenie parametrov do blokov}
+V špecifikácii rozhrania sú uvedené prípustné hodnoty parametrov.
+Môžu byť špecifikované:
+\begin{itemize}
+	\item zoznamom prípustných hodnôt -- bloky takého to parametru budu pozostávať z:
+		\begin{itemize}
+			\item všetkých prípustných hodnôt a 
+			\item jednej neprípustnej hodnoty,
+		\end{itemize}
+		Príklad: \\
+		Zobrazenie hosťov podľa stavu(stav môze byť active, alebo inactive):
+		\begin{equation}
+			q_1 = (active, inactive, hungry)
+		\end{equation}
+	\item typom -- parametre špecifikované typom bude rozdelené do blokov pozostávajúcich z :
+		\begin{itemize}
+			\item platnej hodnoty nachádzajúcej sa v databáze,
+			\item platnej hodnoty nenachadzajúcej sa v databáze,
+			\item neplatnej hodnoty.
+		\end{itemize}
+		Príklad: \\
+		Zobrazenie konkrétneho hosťa podľa id:
+		\begin{equation}
+			q_2 = (1, 795684318, "42")
+		\end{equation}
+\end{itemize}

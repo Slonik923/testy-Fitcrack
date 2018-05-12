@@ -1,46 +1,45 @@
-0.	while 1 do
 		/* Inicializácia */
-1.		Zmaž uzly, ktoré sa podieľajú na riešení úlohy, ktorých pracovný balíček je už dokončený, buď úspešne (finished) alebo neúspešne (exhausted)	
-		if Niektorý z balíčkov presiahol stanovenú dobu ukončenia then
-2.			nastav jeho stav na finished (12)
+0.	Zmaž uzly, ktoré sa podieľajú na riešení úlohy, ktorých pracovný balíček je už dokončený, buď úspešne (finished) alebo neúspešne (exhausted)	
+	if Niektorý z balíčkov presiahol stanovenú dobu ukončenia then
+1.		nastav jeho stav na finished (12)
 
-3.		foreach Bežiaci pracovný balíček (stav ≥ 10) do
-4.			if Nie je nastavený čas zahájenia then
-5.				Nastáva čas zahájenia na aktuálny čas
+2.	foreach Bežiaci pracovný balíček (stav ≥ 10) do
+3.		if Nie je nastavený čas zahájenia then
+4.			Nastáva čas zahájenia na aktuálny čas
 
-6.			if K balíčku sa viažu masky hesiel then
-7.				Ulož ích do príslušného poľa, ktoré odpovedá balíčku
+5.		if K balíčku sa viažu masky hesiel then
+6.			Ulož ích do príslušného poľa, ktoré odpovedá balíčku
 
-8.			Nájdi uzly, ktoré sa majú podieľať na výpočte (a zatiaľ sa nepodieľajú) a ulož ich do databázy
+7.		Nájdi uzly, ktoré sa majú podieľať na výpočte (a zatiaľ sa nepodieľajú) a ulož ich do databázy
 
-			/* Benchmark */
-9.			foreach Pridelený aktívny uzol, ktorý ma stav Benchmark (0) do
-10.				if Uzol ešte nemá naplánovaný benchmark then
-11.					Naplánuj benchmark pre tento uzol
+		/* Benchmark */
+8.		foreach Pridelený aktívny uzol, ktorý ma stav Benchmark (0) do
+9.			if Uzol ešte nemá naplánovaný benchmark then
+10.				Naplánuj benchmark pre tento uzol
 
 
-			/* Výpočet */
-12.			foreach Aktívny uzol v stave Normal (1) do
-13.				if Počet naplánovaných úloh pre uzol ≥ 2 then
-14.					Pokračuj na ďalší uzol
+		/* Výpočet */
+11.		foreach Aktívny uzol v stave Normal (1) do
+12.			if Počet naplánovaných úloh pre uzol ≥ 2 then
+13.				Pokračuj na ďalší uzol
 
-15.				if Stav uzlu je Running (10) then
-16.					Vygeneruj novú úlohu podľa typu balíčka, prípadne znovu prideľ nedokončené úlohy
+14.			if Stav uzlu je Running (10) then
+15.				Vygeneruj novú úlohu podľa typu balíčka, prípadne znovu prideľ nedokončené úlohy
 	
-17.				if Stav uzlu je Finished (12) then
-18.					Znovu prideľ nedokončené úlohy, ak taká neexistuje, nastav stav uzlu na Done (3)
+16.			if Stav uzlu je Finished (12) then
+17.				Znovu prideľ nedokončené úlohy, ak taká neexistuje, nastav stav uzlu na Done (3)
 
-				/* Kontrola stavu */
-19.				if Stav balíčka je Finished (12) a neobsahuje žiadne úlohy then
-20.					if Aktuálny čas > plánovaný Čas ukončenia then
-21.						Nastav stav balíčka na Timeout (4)
+			/* Kontrola stavu */
+18.			if Stav balíčka je Finished (12) a neobsahuje žiadne úlohy then
+19.				if Aktuálny čas > plánovaný Čas ukončenia then
+20.					Nastav stav balíčka na Timeout (4)
+				else
+21.					if Aktuálny index ≥ maximálny index then
+22.						Nastav stav balíčku na Exhausted (2)
+						/* vyčerpaný stavový priestor */
 					else
-22	.					if Aktuálny index ≥ maximálny index then
-23.							Nastav stav balíčku na Exhausted (2)
-							/* vyčerpaný stavový priestor */
-						else
-24.							Nastav stav balíčku na Ready(0)
-							/* výpočet bol pozastavený */
+23.						Nastav stav balíčku na Ready(0)
+						/* výpočet bol pozastavený */
 
-25.		Čakaj stanovený časový interval
+24.	Čakaj stanovený časový interval
 

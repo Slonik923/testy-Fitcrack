@@ -6,7 +6,7 @@ Prvá časť kapitoly približuje životný cyklus vývoja softvéru, druhá sa 
 \section{Modely životného cyklu softvéru}
 \label{life_cycles}
 Vývoj softvéru je možné rozdeliť do niekoľkých častí, pričom každá z nich rieši iné problémy a na konci sú výsledky, ktoré je možné overiť.
-Nie každý model implementuje všetky tieto etapy a v niektorých modeloch sa zase naopak určité čati opakujú viackrát.
+Nie každý model implementuje všetky tieto etapy a v niektorých modeloch sa zase naopak určité časti opakujú viackrát.
 \begin{itemize}
 	\item \textbf{Plánovanie} - Konceptuálny návrh a plánovanie
 	\item \textbf{Analýza} - Zhromažďovanie požiadavok a ich analýza
@@ -19,7 +19,7 @@ Nie každý model implementuje všetky tieto etapy a v niektorých modeloch sa z
 Prvý formálne popísaný a asi najznámejší model životného cyklu softvéru~\ref{waterfall_model_fig}.
 Bol prezentovaný už v~roku 1970 a vyjadruje postupnosť fáz: získavanie požiadavok, systémová analýza, programovanie, testovanie, implementácia a údržba systému.
 Často používaný prí výučbe, je jednoduchý a ľahko sa vysvetľuje.
-Definuje a plánuje fázy, čím pomáha dodržovať termíny a výstupy jednotlivých fáz, ale je veľmi málo flexiblný, keďže počíta stým, že požiadavky sa nebudú meniť, takže plánovanie všetkých úloh projektu je treba naplánovať do posledného detaily, čo je náročné a drahé~\cite{Patton}.
+Definuje a plánuje fázy, čím pomáha dodržovať termíny a výstupy jednotlivých fáz, ale je veľmi málo flexibilný, keďže počíta stým, že požiadavky sa nebudú meniť, takže plánovanie všetkých úloh projektu je treba naplánovať do posledného detaily, čo je náročné a drahé~\cite{Patton}.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.65\linewidth]{obrazky/waterfall_model.png}
@@ -32,7 +32,7 @@ Definuje a plánuje fázy, čím pomáha dodržovať termíny a výstupy jednotl
 Podobný vodopádovému modelu~\ref{waterfall_model}, no každá fáza pred programovaním má k~sebe doplnkovú fázu, ktorá overuje výsledky fázy pred programovaním~\ref{v_model_fig}.
 Napríklad keď sú stanovené požiadavky na softvér, tak hneď môžu byť napísané akceptačné testy~\ref{acceptance_tests}.
 No reálne overenie môže nastať až keď je softvér implementovaný.
-Vtomto modely je použitých niekoľko testovacích techník, pričom každá z~nich overuje inú časť návrhu, designu, alebo implementácie~\cite{Patton}.
+V tomto modely je použitých niekoľko testovacích techník, pričom každá z~nich overuje inú časť návrhu, designu, alebo implementácie~\cite{Patton}.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.65\linewidth]{obrazky/v_model.png}
@@ -67,9 +67,9 @@ Táto kapitola ďalej rozoberá rozdiely v~testovaní pri rozdielnych znalostiac
 \subsection*{Testovanie čiernej skrinky vs. testovanie bielej skrinky}
 \label{blackbox_vs_whitebox}
 Pri testovaní metódou \textbf{čiernej skrinky} sa softvér považuje za nepriehľadnú skrinku a tester nemá žiadne informácie o~jej vnútornej štruktúre.
-Má informácie o~úlohe softvéru, ale nie o~spôsobe vkonávania tejto úlohy.
+Má informácie o~úlohe softvéru, ale nie o~spôsobe vykonávania tejto úlohy.
 Pri tejto metóde je dôležité poznať vlastnosti množiny vstupných dát a vybrať z~nich podmnožinu, ktorá otestuje čo najväčšiu časť možných prípadov.
-Tento prístup je výhodný pri odhǎlovaní chýb v~špecifikácii.
+Tento prístup je výhodný pri odhaľovaní chýb v~špecifikácii.
 Metóda sa používa pri akceptačnom aj regresnom testovaní.
 
 \textbf{Testovanie bielej skrinky} je naopak postavené na fakte, že tester pozná vnútornú štruktúru softvéru.
@@ -126,9 +126,8 @@ Chyba sa stane imúnna voči testom.
 
 \section{Pojmy z testovania}
 \label{pojmy_testovanie}
-\todo{Citovať Smrčku}\\
 V nasledujúcich kapitolách sa venujú testovania a tvorbe testvacích sád na praktickejšej úrovni a sú tam používané pojmy z testovania, preto je vhodné tieto pojmy vysvetliť.
-V testovaní, ako aj v iných oblastiach je možné jeden pojem definovať viacerými názvami, takže nasledujúce pomenovania sú vysvetlené v kontexte tejto práce.
+V testovaní, ako aj v iných oblastiach je možné jeden pojem definovať viacerými názvami, takže nasledujúce pomenovania sú vysvetlené v kontexte tejto práce~\cite{Smrcka}.
 
 \begin{description}
 	\item[Test case (testovací prípad)] \hfill \\
