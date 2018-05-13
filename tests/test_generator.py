@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 import os
 from time import sleep
 from xml.etree import ElementTree as ET
@@ -22,7 +21,7 @@ class TestGenerator(unittest.TestCase):
 
         cls.appid = get_app_version().appid
 
-        ensure_test_dict()
+        ensure_example_dict()
 
     def setUp(self):
         make_run_only(self.tested_module)
@@ -85,8 +84,6 @@ class TestGenerator(unittest.TestCase):
         """
         Generator should set start time to running package if it was not set yet
         """
-        now = datetime.datetime.now().timestamp()
-
         package = add_package(time_start=None, status=PackageStatus.running)
 
         self.wait_for_generator_sleep()
@@ -134,7 +131,6 @@ class TestGenerator(unittest.TestCase):
         except ValueError as err:
             self.fail(err)
 
-        print(output)
         self.verify_tlv_benchmark(output)
 
     def test_add_host_to_package(self):
@@ -412,7 +408,6 @@ class TestGenerator(unittest.TestCase):
         while getattr(obj, attr) != expected_val:
             self.assertNotEqual(timeout, 0, str(obj) + "." + attr + " is " +
                                 str(getattr(obj, attr)) + " not " + str(expected_val))
-            print("val:", getattr(obj, attr))
             sleep(dif)
             timeout -= dif
             session.expire(obj)
@@ -521,12 +516,10 @@ class TestGenerator(unittest.TestCase):
         file = f.read()
         f.close()
         self.assertNotEqual(0, len(file), "Config file is empty")
-        print(file)
         try:
             output = FitcrackTLVConfig.from_string(file)
         except ValueError as err:
             self.fail(err)
-        print(output)
 
         return output
 

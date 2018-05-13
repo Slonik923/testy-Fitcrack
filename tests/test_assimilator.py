@@ -7,7 +7,7 @@ from xml.etree import ElementTree as Et
 
 from database.service import *
 from fc_test_library import is_running, make_run_only, start_daemons, RunnerOutput
-from database.src import FcJob, FcHost, FcHashcache
+from src.database.models import FcHashcache
 
 
 class TestAssimilator(unittest.TestCase):
@@ -138,13 +138,20 @@ class TestAssimilator(unittest.TestCase):
                 set_delete_finished_jobs_setting(delete_finished)
 
                 file_path = config.in_files["assimilator"]["normal_not_found"]
-                old_package = self.run_assimilate_handler(file_path)
+                old_package = self.run_assimilate_handler(file_path, big_job=True)
 
-                self.verify_assimilate_output(file_path, old_package)
+                self.verify_assimilate_output(file_path, old_package, big_job=True)
 
     # TODO: implement or delete from bp
     def test_normal_not_found_small(self):
-        pass
+        for delete_finished in [0, 1]:
+            with self.subTest(delete_finished=delete_finished):
+                set_delete_finished_jobs_setting(delete_finished)
+
+                file_path = config.in_files["assimilator"]["normal_not_found"]
+                old_package = self.run_assimilate_handler(file_path)
+
+                self.verify_assimilate_output(file_path, old_package)
 
     def test_normal_error(self):
         """
@@ -160,6 +167,10 @@ class TestAssimilator(unittest.TestCase):
         """
         deletes all lines from workunit and result tables
         """
+        host = get_host(cls.package_id)
+        if host is not None:
+            session.delete(host)
+
         wus = session.query(WorkUnit)
         for wu in wus:
             session.delete(wu)
@@ -327,7 +338,7 @@ class TestAssimilator(unittest.TestCase):
                                package.cracking_time,
                                "package cracking time")
 
-        fc_host = ensure_host(self.package_id)
+        fc_host = get_host(self.package_id)
 
         job = session.query(FcJob).filter(FcJob.package_id == self.package_id).filter(
             FcJob.host_id == fc_host.id). \
@@ -348,18 +359,24 @@ class TestAssimilator(unittest.TestCase):
             filter(FcHashcache.hash == package.hash)
         self.assertIsNotNone(caches, "Hash should be in cache")
 
-    def verify_normal_not_found(self, output, old_package):
+    def verify_normal_not_found(self, output, old_package, big_job=False):
         """
         Verifies that all attributes from output file are correctly inserted to the database
         output contains information from runner after successful normal task in which password
         was not found
+        :param big_job: job bog enough to change host power
         :param output: Runner Output object
         :param old_package: package before changes from assimilator
         :return:
         """
         settings = get_settings()
         package = get_package(self.package_id)
-        ensure_host(self.package_id)
+        host = get_host(self.package_id)
+
+        if big_job:
+            self.assertGreater(host.power, 0, "Host power should be greater than 0")
+        else:
+            self.assertEqual(host.power, 0)
 
         self.assertAlmostEqual(old_package.cracking_time + output.cracking_time,
                                package.cracking_time,
@@ -375,15 +392,13 @@ class TestAssimilator(unittest.TestCase):
             self.assertEqual(package.indexes_verified,
                              old_package.indexes_verified + job.hc_keyspace)
 
-        # TODO: host cracking time
-
     def verify_normal_error(self):
         """
         Verifies that all attributes from output file are correctly inserted to the database
         output contains information from runner after normal task with error
         :return:
         """
-        host = ensure_host(self.package_id)
+        host = get_host(self.package_id)
         jobs = session.query(FcJob).filter(FcJob.package_id == self.package_id).filter(
             FcJob.host_id == host.id)
         for job in jobs:
@@ -392,10 +407,11 @@ class TestAssimilator(unittest.TestCase):
         self.assertEqual(host.power, 0)
         self.assertEqual(host.status, 0, "host should have status benchmark(0)")
 
-    def verify_assimilate_output(self, filename, old_package):
+    def verify_assimilate_output(self, filename, old_package, big_job=False):
         """
         Creates Runner Output file from filename and calls one of verification methods
         depending on runner output file
+        :param big_job: job bog enough to change host power
         :param filename: file name of runner output
         :param old_package: package before changes from assimilator
         :return:
@@ -415,7 +431,7 @@ class TestAssimilator(unittest.TestCase):
             if runner_output.status_code == 0:
                 self.verify_normal_found(runner_output, old_package)
             elif runner_output.status_code == 1:
-                self.verify_normal_not_found(runner_output, old_package)
+                self.verify_normal_not_found(runner_output, old_package, big_job)
             else:
                 self.verify_normal_error()
         # benchmark all
@@ -423,10 +439,11 @@ class TestAssimilator(unittest.TestCase):
             pass
             # TODO: test_bench_all
 
-    def run_assimilate_handler(self, file_path=""):
+    def run_assimilate_handler(self, file_path="", big_job=False):
         """
         Setups job, workunit, that assimilate_handler will be called
         Moves file to boinc directory hierarchy and creates xml file for workunit with filename
+        :param big_job: job large enough to change host power
         :param file_path: uploads runner output
         :return: old package
         """
@@ -436,7 +453,11 @@ class TestAssimilator(unittest.TestCase):
         else:
             doc_in = None
 
-        job_id = add_job(self.package_id, self.wu_id).id
+        if big_job:
+            job_id = add_job(self.package_id, self.wu_id, hc_keyspace=42).id
+            set_attr(self.canonical_res, "elapsed_time", 1)
+        else:
+            job_id = add_job(self.package_id, self.wu_id).id
 
         old_package = get_package(self.package_id)
         self.assertIsNotNone(old_package)

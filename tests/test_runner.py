@@ -28,15 +28,6 @@ class TestRunner(unittest.TestCase):
             print("You also need to set", hashcat, "as executable")
             exit(1)
 
-    @classmethod
-    def tearDownClass(cls):
-        pass
-        # cls.delete_all()
-
-    def setUp(self):
-        # clear additional options
-        open(config.runner["local.conf"], "w").close()
-
         # these are default files used by Runner and hashcat
         # file with hash
         if not os.path.isfile("data"):
@@ -52,6 +43,15 @@ class TestRunner(unittest.TestCase):
         if not os.path.isfile("dict2"):
             with open("dict2", "w") as f:
                 f.write("b")
+
+        cls.delete_all()
+
+    def setUp(self):
+        # clear additional options
+        open(config.runner["local.conf"], "w").close()
+
+    def tearDown(self):
+        self.delete_all()
 
     @staticmethod
     def delete_all():

@@ -16,6 +16,7 @@ Implementáciou sa skladá z nasledujúcich súborov:
 			\item \textbf{\texttt{models.py}} -- definície tabuliek databázy
 			\item \textbf{\texttt{service.py}} -- funkcie pristupujúce do databázy
 		\end{itemize}
+	\item \textbf{\texttt{src}} --TODO: 
 \end{itemize}
 Súbory začínajúce \texttt{test\_} obsahujú testy a pomocné funkcie k testovaniu jednotlivých modulov.
 Testovacie funkcie majú prefix \texttt{test\_}.
@@ -51,7 +52,7 @@ Nasledujúce kapitoly obsahujú niektoré implementačné detaily testov podľa 
 \label{impl_asim}
 Pri bližšom pohľade na CFG asimilátora~\ref{fig:cfg_asim} a na zoznam primárnych ciest~\ref{navrh_asim} sa každá cesta opakuje so zmeneným len posledným uzlom, kde uzol číslo \texttt{15} znamená, že asimilovaná úloha sa má zmazať a uzol číslo \texttt{16} nastavuje asimilovanej úlohe príznak \texttt{finished}.
 Framework unittest ponúka pre tieto účely možnosť definovať si \texttt{subtest}\footnote{\url{https://docs.python.org/3.6/library/unittest.html\#distinguishing-test-iterations-using-subtests}}, ktorý slúži na spúštanie podobných testov.
-Subtest-u je predaná meniaci sa argument a pri výpise je potom jasné pre ktoré hodnoty tohto argumnety test prešiel, alebo nie.
+Subtest-u je predaná meniaci sa argument a pri výpise je potom jasné pre ktoré hodnoty tohto argumenty test prešiel, alebo nie.
 V našom prípade je parametrom príznak mazania dokončených úloh.
 
 \subsection*{Príprava SUT a návrat SUT do stavu pred testovaním}
@@ -94,9 +95,8 @@ Ponúkajú sa 3 riešenia:
 	\item \texttt{test\_normal\_found}: $t_2 = \{[0, 6, 7, 8, 14, 15], [0, 6, 7, 8, 14, 16]\}$
 	\item \texttt{test\_normal\_error}: $t_3 = \{[0, 6, 7, 13, 14, 15], [0, 6, 7, 13, 14, 16]\}$
 	\item \texttt{test\_bench\_ok\_mask}: $t_4 = \{[0, 1, 2, 3, 4, 14, 15], [0, 1, 2, 3, 4, 14, 16]\}$
-	\item \texttt{test\_normal\_not\_found\_small}: $t_5 = \{[0, 6, 7, 9, 10, 11, 14, 15], [0, 6, 7, 9, 10, 11, 14, 16]\}$
-	\item \texttt{test\_normal\_not\_found}: $t_6 = \{[0, 6, 7, 9, 10, 11, 12, 14, 15], [0, 6, 7, 9, 10, 11, 12, 14, 16]\}$, ktorý sa sám stará o obnovovanie dát z databázy je toto riešenie jednoduché a funguje dobre.
-
+	\item \texttt{test\_normal\_not\_found\_small}: $t_5 = \{[0, 6, 7, 9, 10, 14, 15], [0, 6, 7, 9, 10, 14, 16]\}$
+	\item \texttt{test\_normal\_not\_found}: $t_6 = \{[0, 6, 7, 9, 10, 11, 12, 14, 15], [0, 6, 7, 9, 10, 11, 12, 14, 16]\}$,
 	\item \texttt{test\_bench\_no\_file}: $t_7 = \{[0, 1, 14, 15], [0, 1, 14, 16]\}$
 	\item \texttt{test\_bench\_ok}: $t_8 = \{[0, 1, 2, 4, 14, 15], [0, 1, 2, 4, 14, 16]\}$
 \end{itemize}
@@ -112,7 +112,7 @@ Bližšie informácie o implementácii jednotlivých testovacích prípadov posk
 
 \section{Implementácia testov pre serverový modul generátor}
 \label{impl_gen}
-Testovanie modulu generátor rozsiahle a implementované testy síce spĺňajú kritérium pokrytia všetkých uzlov pseudokódu~\ref{alg:generator}, ale pseudokód nespomína niektoré celkom závažné detaily imlementácie, ako rôzny typy úloh, výpočet veľkosti úlohy v závislosti na sile hosťa, delenie úlohy pri opätovnom pridelení nedokončenej úlohy a iné.
+Testovanie modulu generátor rozsiahle a implementované testy síce spĺňajú kritérium pokrytia všetkých uzlov pseudokódu~\ref{alg:generator}, ale pseudokód nespomína niektoré celkom závažné detaily implementácie, ako rôzny typy úloh, výpočet veľkosti úlohy v závislosti na sile hosťa, delenie úlohy pri opätovnom pridelení nedokončenej úlohy a iné.
 
 Je potrebné overovať správnosť konfiguračných súborov vo formáte XML, ako aj TLV konfiguračných slovníkov vytvorených generátorom pre runner. Pred spustením testov musí databáza obsahovať slovníky používané pri testovaní.
 
@@ -128,7 +128,7 @@ Pre asimilátor bola najlepšia možnosť čakať na zmenu v databáze, kedže s
 Keďže generátor pracuje v nekonečnom cykle, tak do logovacieho súboru zapisuje niekoľko krát za sekundu, čo podstatne zrýchli testy, no očakávana zmena sa nemusela stať hneď vtom prvom cykle, ktorý bol monitorovaný, ale až v ďalších, čo skreslovalo výsledky testov.
 
 Nakoniec bola použitá metóda čakania na zmenu v databáze všade tam, kde to bolo možné a inak sa čaká pevne stanovenú dobu aj napriek spomaleniu vykonávanie testov.
-Implementácia obssahuje všetky 3 funkcie, hlavne pre rozširovanie testovacej sady, keďže pri module generátor nie je jasné, ktorú je najlepšieu používať.
+Implementácia obssahuje všetky 3 funkcie, hlavne pre rozširovanie testovacej sady, keďže pri module generátor nie je jasné, ktorú je najlepšie používať.
 
 \subsection*{Pokrytie primárnych ciest}
 \begin{itemize}

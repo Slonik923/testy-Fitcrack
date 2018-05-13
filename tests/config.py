@@ -1,7 +1,7 @@
 server_ip = "147.229.14.189"
 
 API = {
-    "base": "http://" + server_ip + ":8080/api"
+    "base": "http://" + server_ip + ":8080/api",
 }
 
 database = {
@@ -63,7 +63,6 @@ in_files = {
 }
 
 runner = {
-    # "path": project["home"] + "apps/fitcrack/2/x86_64-pc-linux-gnu/",
     "path": "./",
     "bin": "runner217.bin",
     "hashcat": "hashcat64.bin",
@@ -71,6 +70,23 @@ runner = {
     "stderr": "stderr.txt",
     "local.conf": "local.conf",
     "test_hash": "4ac1b63dca561d274c6055ebf3ed97db",
+}
+
+charsets = {
+    "path": "/home/boincadm/charsets/",
+}
+
+rules = {
+    "path": "/home/boincadm/rules/",
+}
+
+dictionaries = {
+    "path": "/home/boincadm/dictionaries/",
+    "test_dict": {
+        "path": "/home/boincadm/dictionaries/test_dict.txt",
+        "name": "test_dict",
+        "keyspace": 4,
+    }
 }
 
 logs_path = project["home"] + "log_fitcrack-dev/"
