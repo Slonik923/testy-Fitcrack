@@ -1,0 +1,22 @@
+\chapter{Obsah CD}
+\label{cd}
+Priložené CD obsahuje:
+\begin{itemize}
+	\item \texttt{test\_generator.py} -- testovacia sada modulu Generator,
+	\item \texttt{test\_assimilator.py} -- testovacia sada modulu Asimilator,
+	\item \texttt{test\_runner.py} -- testovacia sada modulu Runner,
+	\item \texttt{test\_api.py} -- testovacia sada pre API,
+	\item \texttt{hashcat\_mock.py} -- dvojník nástroja Hashcat, používaný pri testovaní,
+	\item \texttt{hashcat\_parsers.py} -- funkcie a objekty používané pri syntaktickej analýze argumentov pre nástroj Hashcat,
+	\item \texttt{api\_response\_models.py} -- obsahuje funkcie, ktoré konvertujú údaje do formátu \texttt{json}, tak ako to robí API,
+	\item \texttt{config.py} -- konfiguračný súbor obsahujúci informácie o~databáze, cestám k~súborom a iné,
+	\item \texttt{fc\_test\_library.py} -- obsahuje definície funkcií a tried používaných pri testovaní
+	\item \texttt{main.py} -- postupne spúšťa všetky testovacie sady, ako to popisuje kapitola~\ref{spustanie}
+	\item \texttt{database/} -- balíček obsahujúci súbory pracujúce s~databázou, konkrétne:
+		\begin{itemize}
+			\item \texttt{models.py} -- obsahuje mapovanie objektov frameworku SQL Alchemy na tabuľky databázy,
+			\item \texttt{service.py} -- funkcie pracujúce s týmito objektmi.
+		\end{itemize}
+	\item README.md -- pokyny ako nainštalovať a spúšťať testy.
+\end{itemize}
+

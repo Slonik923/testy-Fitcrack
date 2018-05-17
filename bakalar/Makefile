@@ -4,7 +4,7 @@
 # E-mail: dytrych AT fit vutbr cz
 #===========================================
 # asi budete chtit prejmenovat / you will probably rename:
-CO=xchrip00_sep
+CO=xchrip00_bp
 
 all: $(CO).pdf
 
@@ -34,17 +34,8 @@ clean:
 	rm -f *~
 
 pack:
-	tar czvf $(CO).tar.gz *.tex *.bib *.bst ./template-fig/* ./bib-styles/* ./cls/* zadani.pdf $(CO).pdf Makefile Changelog
+	tar czvf $(CO).tar.gz $(CO)*.tex *.bib template-fig/* bib-styles/* zadani.pdf $(CO).pdf Makefile kapitoly/$(CO)*.tex obrazky/*
 
-rename:
-	mv $(CO).tex $(NAME).tex
-	mv $(CO)-01-kapitoly-chapters.tex $(NAME)-01-kapitoly-chapters.tex
-	mv $(CO)-20-literatura-bibliography.bib $(NAME)-20-literatura-bibliography.bib
-	mv $(CO)-30-prilohy-appendices.tex $(NAME)-30-prilohy-appendices.tex
-	sed -i "s/$(CO)-01-kapitoly-chapters/$(NAME)-01-kapitoly-chapters/g" $(NAME).tex
-	sed -i "s/$(CO)-20-literatura-bibliography/$(NAME)-20-literatura-bibliography/g" $(NAME).tex
-	sed -i "s/$(CO)-30-prilohy-appendices/$(NAME)-30-prilohy-appendices/g" $(NAME).tex
-	sed -i "s/$(CO)/$(NAME)/g" Makefile
 	
 # Pozor, vlna neresi vse (viz popis.txt) / Warning - vlna is not solving all problems (see description.txt)
 vlna:

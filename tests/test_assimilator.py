@@ -1,5 +1,7 @@
+#!/usr/bin/python3
 import os
 import subprocess
+import sys
 import unittest
 from shutil import copy
 from time import sleep
@@ -35,7 +37,7 @@ class TestAssimilator(unittest.TestCase):
         # change back to default value
         set_delete_finished_jobs_setting(0)
 
-        delete_all_packages_except_bench_all()
+        # delete_all_packages_except_bench_all()
 
         # start all daemons after all tests are done
         start_daemons()
@@ -52,7 +54,7 @@ class TestAssimilator(unittest.TestCase):
 
     def tearDown(self):
         pass
-        self.delete_all()
+        # self.delete_all()
 
     def test_bench_all_exists(self):
         """
@@ -494,4 +496,5 @@ class TestAssimilator(unittest.TestCase):
 
 # runs all tests in this file if file is run as normal python script
 if __name__ == '__main__':
+    sys.stdout = open('test_assimilator_output.txt', 'w')
     unittest.main()

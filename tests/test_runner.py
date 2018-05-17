@@ -1,6 +1,8 @@
+#!/usr/bin/python3
 import argparse
 import os
 import subprocess
+import sys
 import unittest
 
 import config
@@ -72,7 +74,8 @@ class TestRunner(unittest.TestCase):
 
     def test_benchmark_ok(self):
         self.setup_benchmark()
-        ret = subprocess.call(config.runner["path"] + config.runner["bin"])  # calls runner
+
+        ret = self.call_runner()
         self.assertEqual(0, ret, "Runner return value")
 
         runner_command, out = self.verify_output_files()
@@ -85,7 +88,7 @@ class TestRunner(unittest.TestCase):
     def test_benchmark_error(self):
         self.setup_benchmark(error=True)
 
-        ret = subprocess.call(config.runner["path"] + config.runner["bin"])
+        ret = self.call_runner()
         self.assertEqual(0, ret, "Runner return value")
 
         runner_command, out = self.verify_output_files()
@@ -98,7 +101,7 @@ class TestRunner(unittest.TestCase):
     def test_benchmark_warning(self):
         self.setup_benchmark(warning=True)
 
-        ret = subprocess.call(config.runner["path"] + config.runner["bin"])
+        ret = self.call_runner()
         self.assertEqual(0, ret, "Runner return value")
 
         runner_command, out = self.verify_output_files()
@@ -111,7 +114,7 @@ class TestRunner(unittest.TestCase):
     def test_mask_found(self):
         self.setup_normal(AttackModes.mask, found=True, mask="?d?d?d?d")
 
-        ret = subprocess.call(config.runner["path"] + config.runner["bin"])
+        ret = self.call_runner()
         self.assertEqual(0, ret, "Runner return value")
 
         runner_command, out = self.verify_output_files()
@@ -123,7 +126,7 @@ class TestRunner(unittest.TestCase):
     def test_mask_not_found(self):
         self.setup_normal(AttackModes.mask, mask="?d?d?d?d")
 
-        ret = subprocess.call(config.runner["path"] + config.runner["bin"])
+        ret = self.call_runner()
         self.assertEqual(0, ret, "Runner return value")
 
         runner_command, out = self.verify_output_files()
@@ -135,7 +138,7 @@ class TestRunner(unittest.TestCase):
     def test_mask_error(self):
         self.setup_normal(AttackModes.mask, mask="?d?d?d?d", error=True)
 
-        ret = subprocess.call(config.runner["path"] + config.runner["bin"])
+        ret = self.call_runner()
         self.assertEqual(0, ret, "Runner return value")
 
         runner_command, out = self.verify_output_files()
@@ -147,7 +150,7 @@ class TestRunner(unittest.TestCase):
     def test_combination_found(self):
         self.setup_normal(AttackModes.combination, found=True)
 
-        ret = subprocess.call(config.runner["path"] + config.runner["bin"])
+        ret = self.call_runner()
         self.assertEqual(0, ret, "Runner return value")
 
         runner_command, out = self.verify_output_files()
@@ -159,7 +162,7 @@ class TestRunner(unittest.TestCase):
     def test_combination_not_found(self):
         self.setup_normal(AttackModes.combination)
 
-        ret = subprocess.call(config.runner["path"] + config.runner["bin"])
+        ret = self.call_runner()
         self.assertEqual(0, ret, "Runner return value")
 
         runner_command, out = self.verify_output_files()
@@ -171,7 +174,7 @@ class TestRunner(unittest.TestCase):
     def test_combination_error(self):
         self.setup_normal(AttackModes.combination, error=True)
 
-        ret = subprocess.call(config.runner["path"] + config.runner["bin"])
+        ret = self.call_runner()
         self.assertEqual(0, ret, "Runner return value")
 
         runner_command, out = self.verify_output_files()
@@ -183,20 +186,19 @@ class TestRunner(unittest.TestCase):
     def test_dictionary_found(self):
         self.setup_normal(AttackModes.dictionary, found=True)
 
-        ret = subprocess.call(config.runner["path"] + config.runner["bin"])
+        ret = self.call_runner()
         self.assertEqual(0, ret, "Runner return value")
 
         runner_command, out = self.verify_output_files()
         self.verify_parse_normal(runner_command, hash_type=0, mode=AttackModes.dictionary)
 
-        print("out:", out)
         output = RunnerOutput(out)
         self.verify_output_normal(output, found=True)
 
     def test_dictionary_not_found(self):
         self.setup_normal(AttackModes.dictionary)
 
-        ret = subprocess.call(config.runner["path"] + config.runner["bin"])
+        ret = self.call_runner()
         self.assertEqual(0, ret, "Runner return value")
 
         runner_command, out = self.verify_output_files()
@@ -208,7 +210,7 @@ class TestRunner(unittest.TestCase):
     def test_dictionary_error(self):
         self.setup_normal(AttackModes.dictionary, error=True)
 
-        ret = subprocess.call(config.runner["path"] + config.runner["bin"])
+        ret = self.call_runner()
         self.assertEqual(0, ret, "Runner return value")
 
         runner_command, out = self.verify_output_files()
@@ -216,6 +218,12 @@ class TestRunner(unittest.TestCase):
 
         output = RunnerOutput(out)
         self.verify_output_normal(output, error=True)
+
+    @staticmethod
+    def call_runner():
+        ret = subprocess.call(config.runner["path"] + config.runner["bin"], stdout=sys.stdout)
+
+        return ret
 
     def verify_output_files(self):
         """
@@ -418,4 +426,5 @@ class TestRunner(unittest.TestCase):
 
 # runs all tests in this file if file is run as normal python script
 if __name__ == '__main__':
-    unittest.main()
+    sys.stdout = open('test_runner_output.txt', 'w')
+    unittest.main(verbosity=3)

@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import os
+import sys
 from time import sleep
 from xml.etree import ElementTree as ET
 
@@ -162,7 +163,7 @@ class TestGenerator(unittest.TestCase):
         self.wait_for_generator_sleep()
 
         jobs = get_jobs(package.id)
-        self.assertEqual(num_jobs, jobs.count())
+        self.assertEqual(num_jobs, len(jobs))
         self.assertTrue(is_running(self.tested_module),
                         str(self.tested_module) + "not running anymore")
 
@@ -182,7 +183,7 @@ class TestGenerator(unittest.TestCase):
 
         jobs = get_jobs(package.id)
         self.assertIsNotNone(jobs)
-        self.assertEqual(1, jobs.count())
+        self.assertEqual(1, len(jobs))
         job = None
         for j in jobs:
             if j.workunit_id != 0:
@@ -212,7 +213,7 @@ class TestGenerator(unittest.TestCase):
         set_package_status(package.id, PackageStatus.finished)
 
         jobs = get_jobs(package.id)
-        self.assertEqual(1, jobs.count())
+        self.assertEqual(1, len(jobs))
         job = None
         for j in jobs:
             if j.workunit_id != 0:
@@ -240,7 +241,7 @@ class TestGenerator(unittest.TestCase):
         self.wait_for_generator_sleep()
 
         jobs = get_jobs(package.id)
-        self.assertEqual(jobs.count(), 1)
+        self.assertEqual(len(jobs), 1)
         job = None
         for j in jobs:
             if j.workunit_id != 0:
@@ -358,7 +359,7 @@ class TestGenerator(unittest.TestCase):
         self.wait_for_generator_sleep()
 
         jobs = get_jobs(package.id)
-        self.assertEqual(0, jobs.count(), "Job was generated")
+        self.assertEqual(0, len(jobs), "Job was generated")
 
     def test_set_package_timeout(self):
         """
@@ -526,7 +527,7 @@ class TestGenerator(unittest.TestCase):
     def find_duplicated_job(self, job):
         jobs = get_jobs(job.package_id)
         self.assertIsNotNone(jobs, "Retry job should stay in db")
-        self.assertEqual(2, jobs.count(), "Generator should duplicate job")
+        self.assertEqual(2, len(jobs), "Generator should duplicate job")
 
         new_job = None
         for j in jobs:
@@ -556,4 +557,5 @@ class TestGenerator(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    sys.stdout = open('test_generator_output.txt', 'w')
     unittest.main()
