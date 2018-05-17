@@ -58,11 +58,11 @@ Pred samotným testovaním je potrebné nastaviť hodnoty v konfiguračnom súbo
 
             python3 -m unittest test_generator
 
-        alebo:
+    alebo:
 
             python3 -m unittest test_generator.TestGenerator
 
-        alebo:
+    alebo:
 
             python 3 test_generator.py
 
