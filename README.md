@@ -7,11 +7,11 @@ Automatizované testy pre systém Fitcrack
 
 
 # Testy sú určené pre BOINC server, na ktorom je nainštalovaný funkčný systém Fitcrack.
-Detaily práce sú popísané v **[bakalárskej práci](./bakalar/xchrip00_bp.pdf)**
-Pred samozným testovaním je potrebné nastaviť hodnoty v konfiguračnom súbore `config.py`
+Detaily práce sú popísané v **[bakalárskej práci](./bakalar/xchrip00_bp.pdf)**.
+Pred samotným testovaním je potrebné nastaviť hodnoty v konfiguračnom súbore `config.py`
 
 
-- Testovanie modulu Runner:
+- ## Testovanie modulu Runner:
     Pred spustením testov je potrebné:
     1. pridať do zložky s testami binárny súbor modulu a runner a špecifikovať jeho názov súbore `config.py`
     2. Premenovať súbor `hashcat_mock.py` na názov, ktorý očakáva Runner (`hashcat64.bin` v tejto
@@ -31,20 +31,20 @@ Pred samozným testovaním je potrebné nastaviť hodnoty v konfiguračnom súbo
         python 3 test_runner.py
 
 
-- Testovanie modulu Asimilator:
+- ## Testovanie modulu Asimilator:
 
     Testy modulu Asimilator potrebujú iba pripojenie k databáze a nakonfigurovaný systém Fitcrack.
     Pripojenie k databáze sa nastavuje v konfiguračnom súbore `config.py`
 
-    Testy je možné spúšťať naledovne:
+    ### Testy je možné spúšťať naledovne:
 
         python3 -m unittest test_assimilator
 
-    - alebo:
+    alebo:
 
         python3 -m unittest test_assimilator.TestAssimilator
 
-    - alebo:
+    alebo:
 
         python 3 test_assimilator.py
 
@@ -54,15 +54,15 @@ Pred samozným testovaním je potrebné nastaviť hodnoty v konfiguračnom súbo
     Testy modulu Generator potrebujú iba pripojenie k databáze a nakonfigurovaný systém Fitcrack.
     Pripojenie k databáze sa nastavuje v konfiguračnom súbore `config.py`
 
-    Testy je možné spúšťať naledovne:
+    ### Testy je možné spúšťať naledovne:
 
             python3 -m unittest test_generator
 
-        - alebo:
+        alebo:
 
             python3 -m unittest test_generator.TestGenerator
 
-        - alebo:
+        alebo:
 
             python 3 test_generator.py
 
@@ -71,9 +71,16 @@ Pred samozným testovaním je potrebné nastaviť hodnoty v konfiguračnom súbo
 
         python3 -m unittest test_py
 
-    - alebo:
+    alebo:
 
         python3 test_api.py
+
+
+Pri spúšťaní testov pomocou modulu unittest `python3 -m unittest` je možné špecifikovať konkrétny
+testovací prípad, napríklad:
+
+    python3 -m unittest test_runner.TestRunner.test_benchmark_ok
+
 
 
 [Odkaz na GitHub](https://github.com/Slonik923/testy-Fitcrack)
