@@ -490,8 +490,6 @@ class TestAPIPackage(unittest.TestCase):
     per_page_list = [10, 25, 50, 100]
     desc_list = [None, False, True]
 
-    # TODO: saturovat db
-
     def setUp(self):
         ensure_test_package()
 

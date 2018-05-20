@@ -54,10 +54,16 @@ class ServerSubsystems(Enum):
 
 
 def get_subsystem_name_list():
+    """
+    :return: list of all names from ServerSubsystem enum
+    """
     return [s.name for s in ServerSubsystems]
 
 
 def get_subsystem_value_list():
+    """
+    :return: list of all values from ServerSubsystem enum
+    """
     return [s.value for s in ServerSubsystems]
 
 
@@ -78,7 +84,6 @@ def make_run_only(tested_module):
 
 def is_running(module):
     """
-
     :param module: string with subsystem name
     :return: True if subsystem is running
     """
@@ -91,7 +96,6 @@ def is_running(module):
 
 def get_running_modules():
     """
-
     :return: list of running modules or empty list if project is not running
     """
     result = []
@@ -138,6 +142,9 @@ def kill_all_modules_except(*args):
 
 
 def get_server_info():
+    """
+    :return: dictionary with information about server modules and server itslef
+    """
     server_info = {
         "work_generator": False,
         "assimilator": False,
@@ -152,7 +159,6 @@ def get_server_info():
             if proc.name() == subsystem.name:
                 server_info[subsystem.value] = True
 
-    # TODO: cpu, platform
     info = {
         "subsystems": server_info,
         "server_stats": {
@@ -199,6 +205,17 @@ class FitcrackTLVConfig:
     @classmethod
     def create(cls, mode=None, attack_mode=None, hash_type=None, name=None,
                mask=None, hc_keyspace=None, start_index=None):
+        """
+        FitcrackTLVConfig constructor
+        :param mode:
+        :param attack_mode:
+        :param hash_type:
+        :param name:
+        :param mask:
+        :param hc_keyspace:
+        :param start_index:
+        :return: FitcrackTLVConfig
+        """
         if attack_mode is not None and not isinstance(attack_mode, AttackModes):
             raise ValueError("attack_mode need to be instance of AttackModes Enum")
 
@@ -217,6 +234,11 @@ class FitcrackTLVConfig:
 
     @classmethod
     def from_string(cls, string):
+        """
+        FitcrackTLVConfig constructor
+        :param string:
+        :return: FitcrackTLVConfig
+        """
         o = cls()
         for line in string.split("\n"):
             if len(line) == 0:
@@ -244,6 +266,9 @@ class FitcrackTLVConfig:
         return o
 
     def __str__(self):
+        """
+        :return: string representation of FitcrackTLVConfig
+        """
         res = ""
         if hasattr(self, "mode") and self.mode is not None:
             res = "|||mode|String|1|" + self.mode + "|||\n"
@@ -301,6 +326,10 @@ class RunnerOutput:
 
 
 def isint(value):
+    """
+    :param value:
+    :return: true if value is int
+    """
     try:
         int(value)
         return True

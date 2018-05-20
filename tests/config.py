@@ -1,4 +1,4 @@
-server_ip = "147.229.14.189"
+server_ip = "192.168.0.1"
 
 API = {
     "base": "http://" + server_ip + ":8000/api",
@@ -6,9 +6,9 @@ API = {
 
 database = {
     "host": "localhost",
-    "dbname": "test_fitcrack2",
+    "dbname": "fitcrack",
     "user": "root",
-    "password": "FitcrackBP*17",
+    "password": "root",
     "port": 3306
 }
 

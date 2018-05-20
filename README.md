@@ -80,7 +80,3 @@ Pri spúšťaní testov pomocou modulu unittest `python3 -m unittest` je možné
 testovací prípad, napríklad:
 
     python3 -m unittest test_runner.TestRunner.test_benchmark_ok
-
-
-
-[Odkaz na GitHub](https://github.com/Slonik923/testy-Fitcrack)
