@@ -1,0 +1,24 @@
+{
+  "attackmodes": [
+    {
+      "mode": "Straight",
+      "code": "0"
+    },
+    {
+      "mode": "Combination",
+      "code": "1"
+    },
+    {
+      "mode": "Brute-force",
+      "code": "3"
+    },
+    {
+      "mode": "Hybrid Wordlist + Mask",
+      "code": "6"
+    },
+    {
+      "mode": "Hybrid Mask + Wordlist",
+      "code": "7"
+    }
+  ]
+}

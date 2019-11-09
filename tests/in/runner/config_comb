@@ -1,0 +1,5 @@
+|||attack|String|4|comb|||
+|||attack_mode|UInt|1|1|||
+|||name|String|17|testing reference|||
+|||hash_type|UInt|1|0|||
+|||enable_opencl|Bool|1|1|||

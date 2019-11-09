@@ -1,0 +1,5 @@
+|||attack|String|4|dict|||
+|||attack_mode|UInt|1|0|||
+|||name|String|18|testing reference2|||
+|||hash_type|UInt|1|0|||
+|||enable_opencl|Bool|1|1|||

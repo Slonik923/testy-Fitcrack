@@ -1,0 +1,15 @@
+<output_template>
+    <file_info>
+        <name>normal_not_found</name>
+        <generated_locally />
+        <upload_when_present />
+        <max_nbytes>5000000</max_nbytes>
+        <url>http://147.229.14.189/fitcrack_cgi/file_upload_handler</url>
+    </file_info>
+    <result>
+        <file_ref>
+            <file_name>normal_not_found</file_name>
+            <open_name>out</open_name>
+        </file_ref>
+    </result>
+</output_template>
